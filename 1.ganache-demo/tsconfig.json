@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "module": "ESNext", // 或 "CommonJS"（默认）
+    "target": "ES6",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/Users/bytedance/Desktop/glack/solidity/simple-storage/contracts/SimpleStorage.sol": {
+      "lastModificationDate": 1743664617009,
+      "contentHash": "d7450c17e43d2abdf7a24861a7187019",
+      "sourceName": "contracts/SimpleStorage.sol",
+      "solcConfig": {
+        "version": "0.8.8",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.8"
+      ],
+      "artifacts": [
+        "SimpleStorage"
+      ]
+    }
+  }
+}
