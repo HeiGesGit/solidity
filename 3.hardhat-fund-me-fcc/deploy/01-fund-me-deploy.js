@@ -1,4 +1,4 @@
-const { network } = require("hardhat");
+const { network, ethers } = require("hardhat");
 const {
   networkConfig,
   developmentChain,
@@ -6,7 +6,7 @@ const {
 const { verify } = require("../utils/verify.js");
 require("dotenv").config();
 
-module.exports = async ({ deployments, getNamedAccounts }) => {
+module.exports = async function ({ deployments, getNamedAccounts }) {
   const { deploy, log } = deployments;
   const { deployer } = await getNamedAccounts();
   const chainId = network.config.chainId;
@@ -17,6 +17,9 @@ module.exports = async ({ deployments, getNamedAccounts }) => {
   if (developmentChain.includes(network.name)) {
     const ethUsdAggregator = await deployments.get("MockV3Aggregator");
     ethUsdPriceFeedAddress = ethUsdAggregator.address;
+    // ethUsdAggregator = await ethers.getContract("MockV3Aggregator");
+    // ethUsdPriceFeedAddress = ethUsdAggregator.target;
+
   } else {
     ethUsdPriceFeedAddress = networkConfig[chainId]["ethUsdPriceFeed"];
   }

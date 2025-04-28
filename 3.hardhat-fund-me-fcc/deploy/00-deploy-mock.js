@@ -18,7 +18,7 @@ module.exports = async ({ deployments, getNamedAccounts }) => {
     await deploy("MockV3Aggregator", {
       from: deployer,
       log: true,
-      args: [DECIMALS, INITIAL_ANSWER]
+      args: [DECIMALS, INITIAL_ANSWER],
     });
     console.log("deployed");
     console.log("----------------------------------------");
