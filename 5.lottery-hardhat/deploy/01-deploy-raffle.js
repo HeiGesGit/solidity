@@ -57,6 +57,8 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
     process.env.ETHERSCAN_API_KEY
   ) {
     await verify(fundMe.address, args);
+  } else {
+    await vrfCoordinatorV2Mock.addConsumer(Number(subscriptId), raffle.address);
   }
 };
 

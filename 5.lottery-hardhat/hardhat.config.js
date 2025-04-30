@@ -14,8 +14,6 @@ const RPC_URL = process.env.RPC_URL;
 const VRF_COORDINATOR = process.env.VRF_COORDINATOR;
 const KEY_HASH = process.env.KEY_HASH;
 
-
-
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: "0.8.28",
@@ -27,7 +25,7 @@ module.exports = {
       chainId: 11155111,
       blockConfirmations: 6,
       VRF_COORDINATOR,
-      KEY_HASH
+      KEY_HASH,
     },
   },
   gasReporter: {
@@ -48,9 +46,8 @@ module.exports = {
       default: 0,
       // 11155111: 1, // 让 sepolia 的下标为 1 的用户 设置为 deployer
     },
-    user: {
+    player: {
       default: 1,
     },
   },
-  
 };
