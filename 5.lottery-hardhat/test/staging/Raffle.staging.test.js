@@ -11,7 +11,9 @@ developmentChains.includes(network.name)
         deployer = (await getNamedAccounts()).deployer;
         raffleContract = await ethers.getContract("Raffle");
         raffle = raffleContract.connect(deployer);
-        raffleEntranceFee = await raffle.getEntranceFee();
+        raffleEntranceFee = await raffle.getEnterFee();
+        console.log(raffleEntranceFee, 'raffleEntranceFee');
+        
       });
 
       describe("fulfillRandomWords", function () {

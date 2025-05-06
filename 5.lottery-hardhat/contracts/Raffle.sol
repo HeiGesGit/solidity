@@ -11,8 +11,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
-import "@chainlink/contracts/src/v0.8/vrf/interfaces/VRFCoordinatorV2Interface.sol";
-import "@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol";
+import {VRFConsumerBaseV2Plus} from "@chainlink/contracts/src/v0.8/vrf/dev/VRFConsumerBaseV2Plus.sol";
+import {VRFV2PlusClient} from "@chainlink/contracts/src/v0.8/vrf/dev/libraries/VRFV2PlusClient.sol";
 import {AutomationCompatibleInterface} from "@chainlink/contracts/src/v0.8/automation/AutomationCompatible.sol";
 import "hardhat/console.sol";
 
@@ -30,7 +30,7 @@ error Raffle__UpkeepNotNeeded(
     创建一个不可篡改的智能合约，提供给用户抽奖
     实现了 vrf chainlink v2 以及 chainlink keepers 
  */
-contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
+contract Raffle is VRFConsumerBaseV2Plus, AutomationCompatibleInterface {
     enum RaffleState {
         OPEN,
         CALCULATING
@@ -40,12 +40,12 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
     event RequestRaffleWinner(uint256 indexed requestId);
     event WinnerPicked(address indexed winnerPicked);
 
-    VRFCoordinatorV2Interface private immutable i_vrfCoordinator;
     uint256 private immutable i_enterFee;
-    uint64 private immutable i_subscriptionId;
+    uint256 private immutable i_subscriptionId;
     uint256 private immutable i_interval;
     bytes32 private immutable i_gasLane;
     uint32 private immutable i_callbackGasLimit;
+    bool private immutable i_enableNativePayment;
 
     uint256 private s_lastTimeStamp;
 
@@ -60,14 +60,14 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
 
     constructor(
         address vrfCoordinatorV2,
-        uint64 subscriptionId,
+        uint256 subscriptionId,
         bytes32 gaslane, // key hash
         uint256 interval,
         uint256 enterFee,
-        uint32 callbackGasLimit
-    ) VRFConsumerBaseV2(vrfCoordinatorV2) {
+        uint32 callbackGasLimit,
+        bool enableNativePayment
+    ) VRFConsumerBaseV2Plus(vrfCoordinatorV2) {
         i_subscriptionId = subscriptionId;
-        i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinatorV2);
         i_enterFee = enterFee;
         s_raffleState = RaffleState.OPEN;
         s_lastTimeStamp = block.timestamp;
@@ -75,6 +75,7 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
         i_interval = interval;
         i_gasLane = gaslane;
         i_callbackGasLimit = callbackGasLimit;
+        i_enableNativePayment = enableNativePayment;
     }
 
     // 1. 进入抽奖
@@ -129,12 +130,19 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
             );
         }
         s_raffleState = RaffleState.CALCULATING;
-        uint256 requestId = i_vrfCoordinator.requestRandomWords(
-            i_gasLane,
-            i_subscriptionId,
-            REQUEST_CONFIRMATIONS,
-            i_callbackGasLimit,
-            NUM_WORDS
+        uint256 requestId = s_vrfCoordinator.requestRandomWords(
+            VRFV2PlusClient.RandomWordsRequest({
+                keyHash: i_gasLane,
+                subId: i_subscriptionId,
+                requestConfirmations: REQUEST_CONFIRMATIONS,
+                callbackGasLimit: i_callbackGasLimit,
+                numWords: NUM_WORDS,
+                extraArgs: VRFV2PlusClient._argsToBytes(
+                    VRFV2PlusClient.ExtraArgsV1({
+                        nativePayment: i_enableNativePayment
+                    })
+                )
+            })
         );
         // 貌似有点多余，因为 requestId 给了前端也做不了什么事情。
         emit RequestRaffleWinner(requestId);
@@ -145,7 +153,7 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
      */
     function fulfillRandomWords(
         uint256 /* requestId */,
-        uint256[] memory randomWords
+        uint256[] calldata randomWords
     ) internal override {
         uint256 indexOfWinner = randomWords[0] % s_players.length;
         address payable recentWinner = s_players[indexOfWinner];
@@ -207,3 +215,5 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatibleInterface {
         return i_interval;
     }
 }
+
+// 部署成功，并且有抽奖用户 0xf71322443ceD041814fA605383DBdb3C72Cd20E0
