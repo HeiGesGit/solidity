@@ -8,7 +8,7 @@ const networkConfig = {
     enterFee: ethers.parseEther("0.02"),
     gasLane:
       "0x787d74caea10b2b357790d5b5247c2f63d1d91572a9846f780606e4d953677ae",
-    subscriptId: "0",
+    subscriptId: "53848252032028089055526812993571037610340660547374314352813404140952394424854", // sepolia 的 subId
     callbackGasLimit: "500000",
     interval: "30",
   },
@@ -23,9 +23,11 @@ const networkConfig = {
 };
 
 const developmentChains = ["hardhat", "localhost"];
+const VERIFICATION_BLOCK_CONFIRMATIONS = 6
 
 module.exports = {
   networkConfig,
   developmentChains,
   verify,
+  VERIFICATION_BLOCK_CONFIRMATIONS
 };
