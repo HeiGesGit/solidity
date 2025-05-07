@@ -18,7 +18,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
   if (chainId == 31337) {
     // create VRFV2 Subscription
-    vrfCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock");
+    vrfCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2_5Mock");
     vrfCoordinatorV2Address = vrfCoordinatorV2Mock.target;
     const transactionResponse = await vrfCoordinatorV2Mock.createSubscription();
     const transactionReceipt = await transactionResponse.wait();
@@ -57,7 +57,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   // Ensure the Raffle contract is a valid consumer of the VRFCoordinatorV2Mock contract.
   if (developmentChains.includes(network.name)) {
     const vrfCoordinatorV2Mock = await ethers.getContract(
-      "VRFCoordinatorV2Mock"
+      "VRFCoordinatorV2_5Mock"
     );
     await vrfCoordinatorV2Mock.addConsumer(subscriptionId, raffle.address);
   }

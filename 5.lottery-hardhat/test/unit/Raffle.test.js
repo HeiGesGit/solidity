@@ -21,7 +21,7 @@ const { assert, expect } = require("chai");
         // 对应的 是 00-mock、01-raffle  最底下的tags
         await deployments.fixture(["mocks", "raffle"]);
         // 获取对应【已部署】的 v2mock 合约
-        vrfV2Mock = await ethers.getContract("VRFCoordinatorV2Mock");
+        vrfV2Mock = await ethers.getContract("VRFCoordinatorV2_5Mock");
         // 获取 【已部署】的 raffle 合约
         raffleContract = await ethers.getContract("Raffle");
         // 连接一下某个用户（如果有特定的场景需要某个用户才能使用的方法，可以使用connect）
