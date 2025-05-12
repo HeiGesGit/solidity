@@ -1,10 +1,10 @@
-require("@nomiclabs/hardhat-waffle")
-require("@nomiclabs/hardhat-etherscan")
-require("hardhat-deploy")
-require("solidity-coverage")
-require("hardhat-gas-reporter")
-require("hardhat-contract-sizer")
-require("dotenv").config()
+require("@nomiclabs/hardhat-waffle");
+require("@nomiclabs/hardhat-etherscan");
+require("hardhat-deploy");
+require("solidity-coverage");
+require("hardhat-gas-reporter");
+require("hardhat-contract-sizer");
+require("dotenv").config();
 
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
@@ -27,6 +27,9 @@ module.exports = {
       VRF_COORDINATOR,
       KEY_HASH,
     },
+  },
+  paths: {
+    artifacts: "../wagmi-project/src/abis", // 输出到前端项目的 abis 目录
   },
   gasReporter: {
     enabled: true,
@@ -51,6 +54,6 @@ module.exports = {
     },
   },
   mocha: {
-    timeout: 200000
-  }
+    timeout: 200000,
+  },
 };
