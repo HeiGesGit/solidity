@@ -29,7 +29,7 @@ module.exports = {
     },
   },
   paths: {
-    artifacts: "../wagmi-project/src/abis", // 输出到前端项目的 abis 目录
+    artifacts: "../6-wagmi-project/src/abis", // 输出到前端项目的 abis 目录
   },
   gasReporter: {
     enabled: true,
