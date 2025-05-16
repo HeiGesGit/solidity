@@ -24,4 +24,4 @@ ignition/deployments/chain-31337
 
 # next.js
 .next/
-output
+out
