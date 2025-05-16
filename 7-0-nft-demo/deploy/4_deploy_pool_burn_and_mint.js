@@ -1,36 +1,26 @@
-const { network } = require("hardhat")
+const { ethers } = require("hardhat");
 
-module.exports = async({getNamedAccounts, deployments}) => {
-    const { firstAccount } = await getNamedAccounts()
-    const { deploy, log } = deployments
-    const {developmentChains, networkConfig} = require("../helper-hardhat-config")
-    
-    let router
-    let linkTokenAddr
-    let wnftAddr
-    if(developmentChains.includes(network.name)) {
-        const ccipSimulatorTx = await deployments.get("CCIPLocalSimulator")
-        const ccipSimulator = await ethers.getContractAt("CCIPLocalSimulator", ccipSimulatorTx.address)
-        const ccipConfig = await ccipSimulator.configuration()
-        router = ccipConfig.destinationRouter_
-        linkTokenAddr = ccipConfig.linkToken_        
-    } else {
-        router = networkConfig[network.config.chainId].router
-        linkTokenAddr = networkConfig[network.config.chainId].linkToken
-    }
+module.exports = async ({ getNamedAccounts, deployments }) => {
+  const { firstAccount } = await getNamedAccounts();
+  const { deploy, log } = deployments;
 
-    const wnftTx = await deployments.get("WrapperMyToken")
-    wnftAddr = wnftTx.address
+  log("deploy pool_burn_and_mint_nft contract");
 
-    log(`get the parameters: ${router}, ${linkTokenAddr}, ${wnftAddr}`)
-    log("deploying nftPoolBurnAndMint")
-    await deploy("NFTPoolBurnAndMint", {
-        contract: "NFTPoolBurnAndMint",
-        from: firstAccount,
-        log: true,
-        args: [router, linkTokenAddr, wnftAddr]
-    })
-    log("nftPoolBurnAndMint deployed")
-}
+  const CCIPSimulatorDeployment = await deployments.get("CCIPLocalSimulator");
+  const ccSimulator = await ethers.getContractAt(
+    "CCIPLocalSimulator",
+    CCIPSimulatorDeployment.address
+  );
+  const ccipConfig = await ccSimulator.configuration();
+  const { destinationRouter_, linkToken_ } = ccipConfig;
+  const wnftAddr = (await deployments.get("WrapperMyToken")).address;
+  await deploy("NFTPoolBurnAndMint", {
+    contract: "NFTPoolBurnAndMint",
+    from: firstAccount,
+    log: true,
+    args: [destinationRouter_, linkToken_, wnftAddr],
+  });
+  log("pool_burn_and_mint_nft contract deployed successs");
+};
 
-module.exports.tags = ["all", "destchain"]
+module.exports.tags = ["sourcechain", "all"];

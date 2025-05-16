@@ -1,22 +1,16 @@
-const { getNamedAccounts, deployments, network } = require("hardhat");
-const { developmentChains } = require("../helper-hardhat-config")
+module.exports = async ({ getNamedAccounts, deployments }) => {
+  const { firstAccount } = await getNamedAccounts();
+  const { deploy, log } = deployments;
 
-module.exports = async({getNamedAccounts, deployments}) => {
+  log("deploy ccip simulator contract");
 
-    if(developmentChains.includes(network.name)) {
-        const { firstAccount } = await getNamedAccounts()
-        const { deploy, log } = deployments
-        log("deploy the CCIP local simulator")
-        await deploy("CCIPLocalSimulator", {
-            contract: "CCIPLocalSimulator",
-            from: firstAccount,
-            log: true,
-            args: []
-        })
-        log("CCIP local simulator deployed!")
-    } else {
-        log("not in local, skip CCIP local")
-    }
-}
+  await deploy("CCIPLocalSimulator", {
+    contract: "CCIPLocalSimulator",
+    from: firstAccount,
+    log: true,
+    args: [],
+  });
+  log("nft ccip simulator contract deployed successs");
+};
 
-module.exports.tags = ["all", "test"]
+module.exports.tags = ["sourcechain", "all"];
